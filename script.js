@@ -1,92 +1,84 @@
-/* ===== VARIÁVEIS GLOBAIS ===== */
-let cart = [];
-let companyWhatsApp = '';
-let themeColor = "#388e3c";
-let companyStatus = "Aberto";
+ let cart = [];
+    let companyWhatsApp = '';
+    let themeColor = "#388e3c";
+    let companyStatus = "Aberto";
 
-/* ===== FUNÇÃO DE INICIALIZAÇÃO MESTRE ===== */
-async function iniciarCardapio(urlJson) {
+    function notify(msg) {
+      const container = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = msg;
+      container.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 2000);
+    }
+
+document.addEventListener('DOMContentLoaded', async () => {
   const progressBar = document.getElementById('main-progress-bar');
   if (progressBar) progressBar.style.width = '15%';
 
   try {
-    // Busca os dados dinâmicos do cliente
-    const response = await fetch(urlJson + '?v=' + Date.now());
-    if (!response.ok) throw new Error('Falha ao carregar dados do cliente');
+    // 🚀 AJUSTE DE CAMINHO: Aponta para a pasta que vimos na sua foto
+   const response = await fetch('./dados/cardapio.json?v=' + Date.now());
+    
+    if (!response.ok) throw new Error('Arquivo não encontrado no servidor');
+    
     const res = await response.json();
 
     if (res.success) {
       const info = res.info;
       const data = res.menu;
 
-      // 1. Configurações de Identidade
+      // Configurações visuais (Cores e WhatsApp)
       themeColor = info.siteColor || "#388e3c";
       companyWhatsApp = info.whatsappNumber || '';
       companyStatus = info.status || 'Aberto';
       
-      // 2. APLICA A COR DINÂMICA NO CSS (Variável Global)
-      document.documentElement.style.setProperty('--primary-color', themeColor);
-      
-      // 3. Preenche textos e Logo
       document.getElementById('company-name').textContent = info.companyName;
-      document.title = info.companyName;
-      
       if (info.logoUrl) {
         document.getElementById('company-logo').src = info.logoUrl;
         document.getElementById('company-logo').style.display = 'block';
-        const loaderImg = document.getElementById('loader-logo-img');
-        if (loaderImg) {
-          loaderImg.src = info.logoUrl;
-          loaderImg.style.display = 'block';
+        if (document.getElementById('loader-logo-img')) {
+          document.getElementById('loader-logo-img').src = info.logoUrl;
+          document.getElementById('loader-logo-img').style.display = 'block';
         }
       }
 
-      // 4. Renderiza o Cardápio
-      renderMenu(data);
+      // Aplica o tema dinâmico
+      const style = document.createElement('style');
+      style.textContent = `
+        .section-title { border-color: ${themeColor}; color: ${themeColor}; }
+        .add-to-cart-btn, #cart-float, .quantity-controls button { background-color: ${themeColor} !important; }
+        .item-name { color: ${themeColor}; }
+      `;
+      document.head.appendChild(style);
       
-      // Finaliza carregamento visual
       if (progressBar) {
         progressBar.style.backgroundColor = themeColor;
         progressBar.style.width = '100%';
       }
-      setTimeout(finalizarCarregamento, 600);
+
+      renderMenu(data);
+
+      setTimeout(() => {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+          overlay.style.opacity = '0';
+          setTimeout(() => overlay.style.display = 'none', 500);
+        }
+      }, 600);
 
     } else {
-      notify("Erro: Dados incompletos.");
+      notify("Erro: Os dados do cardápio estão incompletos.");
     }
   } catch (err) {
-    console.error("Erro no Motor Mestre:", err);
-    notify("Sem conexão com o cardápio.");
+    console.error("Erro técnico:", err);
+    notify("Sem conexão com o cardápio. Clique em 'Publicar' no Admin.");
   }
+
   setupUI();
-}
+});
 
-/* ===== FUNÇÕES DE SUPORTE ===== */
-function finalizarCarregamento() {
-  const overlay = document.getElementById('loading-overlay');
-  if (overlay) {
-    overlay.style.opacity = '0';
-    setTimeout(() => overlay.style.display = 'none', 500);
-  }
-}
-
-function notify(msg) {
-  const container = document.getElementById('toast-container');
-  if (!container) return;
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  container.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 2000);
-}
-
-/* ===== LÓGICA DO CARDÁPIO (COLE SUAS FUNÇÕES ABAIXO) ===== */
-// Aqui você mantém: renderMenu, renderItem, renderOptions, toggle, qty, add, updateUI, remove, finalizarPedido, setupUI
-
-function renderMenu(data) { /* seu código... */ }
-function renderItem(item) { /* seu código... */ }
-// ... e assim por diante 
-function renderMenu(data) {
+    function renderMenu(data) {
       const content = document.getElementById('menu-content');
       content.innerHTML = '';
       let items = [
