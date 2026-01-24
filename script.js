@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (res.success) {
       const info = res.info;
+     renderFooterHorarios(info);
       const data = res.menu;
 
       // Configurações visuais (Cores e WhatsApp)
@@ -268,31 +269,42 @@ function finalizarPedido() {
       i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none'
     );
   };
-   iniciarCardapio('./dados/cardapio.json');
+   
 
-    let horariosVisivel = false;
+// =====================
+// FOOTER HORÁRIOS
+// =====================
+let horariosVisivel = false;
 
-    function toggleHorarios() {
-      horariosVisivel = !horariosVisivel;
-      document
-        .getElementById('footer-horarios-box')
-        .classList.toggle('hidden');
-    }
+function toggleHorarios() {
+  const box = document.getElementById('footer-horarios-box');
+  if (!box) return;
 
-    function renderFooterHorarios(companyInfo) {
-      document.getElementById('footer-status-label').innerText =
-        companyInfo.status === 'Aberto'
-          ? '🟢 Aberto agora'
-          : '🔴 Fechado';
+  horariosVisivel = !horariosVisivel;
+  box.classList.toggle('hidden');
+}
 
-      document.getElementById('footer-status-msg').innerText =
-        companyInfo.statusMsg || '';
+function renderFooterHorarios(companyInfo) {
+  if (!companyInfo) return;
 
-      const box = document.getElementById('footer-horarios-box');
-      box.innerHTML = companyInfo.horarios.map(h => `
-        <div>
-          <strong>${h.dia}:</strong> ${h.intervalos}
-        </div>
-      `).join('');
-    }
+  const statusLabel = document.getElementById('footer-status-label');
+  const statusMsg = document.getElementById('footer-status-msg');
+  const box = document.getElementById('footer-horarios-box');
+
+  if (!statusLabel || !box) return;
+
+  statusLabel.innerText =
+    companyInfo.status === 'Aberto'
+      ? '🟢 Aberto agora'
+      : '🔴 Fechado';
+
+  statusMsg.innerText = companyInfo.statusMsg || '';
+
+  box.innerHTML = (companyInfo.horarios || []).map(h => `
+    <div>
+      <strong>${h.dia}:</strong> ${h.intervalos}
+    </div>
+  `).join('');
+}
+
 }
