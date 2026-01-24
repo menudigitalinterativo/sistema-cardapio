@@ -268,4 +268,31 @@ function finalizarPedido() {
       i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none'
     );
   };
+   iniciarCardapio('./dados/cardapio.json');
+
+    let horariosVisivel = false;
+
+    function toggleHorarios() {
+      horariosVisivel = !horariosVisivel;
+      document
+        .getElementById('footer-horarios-box')
+        .classList.toggle('hidden');
+    }
+
+    function renderFooterHorarios(companyInfo) {
+      document.getElementById('footer-status-label').innerText =
+        companyInfo.status === 'Aberto'
+          ? '🟢 Aberto agora'
+          : '🔴 Fechado';
+
+      document.getElementById('footer-status-msg').innerText =
+        companyInfo.statusMsg || '';
+
+      const box = document.getElementById('footer-horarios-box');
+      box.innerHTML = companyInfo.horarios.map(h => `
+        <div>
+          <strong>${h.dia}:</strong> ${h.intervalos}
+        </div>
+      `).join('');
+    }
 }
