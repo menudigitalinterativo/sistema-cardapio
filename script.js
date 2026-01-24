@@ -294,12 +294,9 @@ function setupUI() {
 // =====================
 // FOOTER HORÁRIOS
 // =====================
-let horariosVisivel = false;
-
 function toggleHorarios() {
   const box = document.getElementById('footer-horarios-box');
   if (!box) return;
-  horariosVisivel = !horariosVisivel;
   box.classList.toggle('hidden');
 }
 
@@ -317,3 +314,4 @@ function renderFooterHorarios(info) {
       `<div><strong>${h.dia}:</strong> ${h.intervalos}</div>`
     ).join('');
 }
+
