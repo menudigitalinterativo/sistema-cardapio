@@ -12,72 +12,36 @@
       setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 2000);
     }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const progressBar = document.getElementById('main-progress-bar');
-  if (progressBar) progressBar.style.width = '15%';
-
-  try {
-    // 🚀 AJUSTE DE CAMINHO: Aponta para a pasta que vimos na sua foto
-   const response = await fetch('./dados/cardapio.json?v=' + Date.now());
-    
-    if (!response.ok) throw new Error('Arquivo não encontrado no servidor');
-    
-    const res = await response.json();
-
-    if (res.success) {
-      const info = res.info;
-     renderFooterHorarios(info);
-      const data = res.menu;
-
-      // Configurações visuais (Cores e WhatsApp)
-      themeColor = info.siteColor || "#388e3c";
-      companyWhatsApp = info.whatsappNumber || '';
-      companyStatus = info.status || 'Aberto';
-      
-      document.getElementById('company-name').textContent = info.companyName;
-      if (info.logoUrl) {
-        document.getElementById('company-logo').src = info.logoUrl;
-        document.getElementById('company-logo').style.display = 'block';
-        if (document.getElementById('loader-logo-img')) {
-          document.getElementById('loader-logo-img').src = info.logoUrl;
-          document.getElementById('loader-logo-img').style.display = 'block';
+    document.addEventListener('DOMContentLoaded', () => {
+      google.script.run.withSuccessHandler(info => {
+        const logo = document.getElementById('company-logo');
+        const loaderLogo = document.getElementById('loader-logo-img');
+        if (info.logoUrl) {
+          logo.src = info.logoUrl; logo.style.display = 'block';
+          loaderLogo.src = info.logoUrl; loaderLogo.style.display = 'block';
         }
-      }
+        document.getElementById('company-name').textContent = info.companyName || '';
+        companyWhatsApp = info.whatsappNumber || '';
+        companyStatus = info.status || 'Aberto';
+        const st = document.getElementById('status-message');
+        st.textContent = companyStatus;
+        st.style.color = companyStatus === 'Aberto' ? 'green' : 'red';
 
-      // Aplica o tema dinâmico
-      const style = document.createElement('style');
-      style.textContent = `
-        .section-title { border-color: ${themeColor}; color: ${themeColor}; }
-        .add-to-cart-btn, #cart-float, .quantity-controls button { background-color: ${themeColor} !important; }
-        .item-name { color: ${themeColor}; }
-      `;
-      document.head.appendChild(style);
-      
-      if (progressBar) {
-        progressBar.style.backgroundColor = themeColor;
-        progressBar.style.width = '100%';
-      }
-
-      renderMenu(data);
-
-      setTimeout(() => {
-        const overlay = document.getElementById('loading-overlay');
-        if (overlay) {
-          overlay.style.opacity = '0';
-          setTimeout(() => overlay.style.display = 'none', 500);
+        if (info.siteColor) {
+          themeColor = info.siteColor;
+          document.getElementById('main-progress-bar').style.backgroundColor = themeColor;
+          const style = document.createElement('style');
+          style.textContent = `
+            .section-title { border-color: ${themeColor}; color: ${themeColor}; }
+            .add-to-cart-btn, #cart-float, .quantity-controls button { background-color: ${themeColor} !important; }
+            .item-name { color: ${themeColor}; }
+          `;
+          document.head.appendChild(style);
         }
-      }, 600);
-
-    } else {
-      notify("Erro: Os dados do cardápio estão incompletos.");
-    }
-  } catch (err) {
-    console.error("Erro técnico:", err);
-    notify("Sem conexão com o cardápio. Clique em 'Publicar' no Admin.");
-  }
-
-  setupUI();
-});
+        google.script.run.withSuccessHandler(data => renderMenu(data)).getMenuDataForClient();
+      }).getCompanyInfo();
+      setupUI();
+    });
 
     function renderMenu(data) {
       const content = document.getElementById('menu-content');
@@ -110,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const img = item['Imagem'] || item['URL da Imagem'];
       
       div.innerHTML = `
-        ${img ? `<img src="${img}" class="item-image" loading="lazy">` : ''}
+        ${img ? `<img src="${img}" class="item-image">` : ''}
         <div class="item-details">
           <div class="item-header-clickable" onclick="toggle(this, ${item.type === 'complex'})">
             <span class="item-name">${item.Nome}</span>
@@ -210,101 +174,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       if(cart[i].qty > 1) cart[i].qty--; else cart.splice(i,1);
       updateUI();
     }
-function finalizarPedido() {
-  const nomeCliente = document.getElementById('client-name').value.trim();
-  
-  // Validações
-  if (companyStatus !== 'Aberto') return notify("Loja Fechada!");
-  if (!cart.length) return notify("Sacola vazia!");
-  if (!nomeCliente) return notify("Por favor, informe seu nome."); 
 
-  let mensagem = 'Olá, gostaria de fazer o pedido:%0A';
-  mensagem += `*Cliente:* ${nomeCliente}%0A`;
-  let totalGeral = 0;
-
-  cart.forEach(item => {
-    const subTotal = item.price * item.qty;
-    totalGeral += subTotal;
-
-    // Item principal
-    mensagem += `%0A${item.qty}x ${item.name} - R$ ${subTotal.toFixed(2).replace('.', ',')}%0A`;
-
-    // Opcionais (um embaixo do outro)
-    if (item.opts && item.opts.length > 0) {
-      mensagem += item.opts.map(o => `• ${o.qty}x ${o.name}`).join('%0A') + '%0A';
+    function finalizarPedido() {
+      if(!cart.length) return notify("Sacola vazia!");
+      let m = `*PEDIDO*%0A`;
+      cart.forEach(i => {
+        m += `%0A*${i.qty}x ${i.name}*`;
+        i.opts.forEach(o => m += `%0A - ${o.qty}x ${o.name}`);
+      });
+      window.open(`https://wa.me/${companyWhatsApp}?text=${m}`);
     }
-  });
 
-  // Total no final
-  mensagem += `%0A*Total do Pedido: R$ ${totalGeral.toFixed(2).replace('.', ',')}*`;
-
-  if (!companyWhatsApp) return notify("WhatsApp não configurado!");
-
-  window.open(`https://wa.me/${companyWhatsApp}?text=${mensagem}`, '_blank');
-
-  // Limpa o carrinho e fecha o modal
-  cart = [];
-  document.getElementById('client-name').value = '';
-  updateUI();
-  document.getElementById('cart-modal').style.display = 'none';
-  notify("Pedido enviado!");
-}
-
-  function setupUI() {
-  const modal = document.getElementById('cart-modal');
-
-  document.getElementById('cart-float').onclick = () => {
-    modal.style.display = 'block';
-    document.body.classList.add('modal-open');
-  };
-
-  document.getElementById('close-cart').onclick = () => {
-    modal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-  };
-
-  document.getElementById('search-input').oninput = (e) => {
-    const v = e.target.value.toLowerCase();
-    document.querySelectorAll('.menu-item').forEach(i =>
-      i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none'
-    );
-  };
-   
-
-// =====================
-// FOOTER HORÁRIOS
-// =====================
-let horariosVisivel = false;
-
-function toggleHorarios() {
-  const box = document.getElementById('footer-horarios-box');
-  if (!box) return;
-
-  horariosVisivel = !horariosVisivel;
-  box.classList.toggle('hidden');
-}
-
-function renderFooterHorarios(companyInfo) {
-  if (!companyInfo) return;
-
-  const statusLabel = document.getElementById('footer-status-label');
-  const statusMsg = document.getElementById('footer-status-msg');
-  const box = document.getElementById('footer-horarios-box');
-
-  if (!statusLabel || !box) return;
-
-  statusLabel.innerText =
-    companyInfo.status === 'Aberto'
-      ? '🟢 Aberto agora'
-      : '🔴 Fechado';
-
-  statusMsg.innerText = companyInfo.statusMsg || '';
-
-  box.innerHTML = (companyInfo.horarios || []).map(h => `
-    <div>
-      <strong>${h.dia}:</strong> ${h.intervalos}
-    </div>
-  `).join('');
-}
-
-}
+    function setupUI() {
+      document.getElementById('cart-float').onclick = () => document.getElementById('cart-modal').style.display='block';
+      document.getElementById('close-cart').onclick = () => document.getElementById('cart-modal').style.display='none';
+      document.getElementById('search-input').oninput = (e) => {
+        const v = e.target.value.toLowerCase();
+        document.querySelectorAll('.menu-item').forEach(i => i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none');
+      };
+    }
