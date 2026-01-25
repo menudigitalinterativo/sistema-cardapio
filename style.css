@@ -399,48 +399,5 @@
   font-weight: bold;
   margin-bottom: 10px;
 }
-#footer-horarios {
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  border-top: 1px solid #eee;
-  padding: 14px;
-  text-align: center;
-  z-index: 999;
-}
 
-.footer-status {
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-
-.footer-status small {
-  display: block;
-  font-weight: normal;
-  color: #777;
-}
-
-.footer-horarios-link {
-  margin-top: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--site-color, #28a745);
-}
-
-.footer-horarios-link:hover {
-  text-decoration: underline;
-}
-
-
-.horarios-box {
-  margin-top: 10px;
-  padding: 10px;
-  background: #f7f7f7;
-  border-radius: 8px;
-  font-size: 13px;
-}
-
-.hidden {
-  display: none;
-}
 
