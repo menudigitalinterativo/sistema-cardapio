@@ -268,7 +268,6 @@ function finalizarPedido() {
       i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none'
     );
   };
-   <script>
   // Esta função será chamada toda vez que o carrinho abrir ou o bairro mudar
   function atualizarTotalComFrete() {
     const select = document.getElementById('select-bairro');
@@ -295,5 +294,4 @@ function finalizarPedido() {
       select.appendChild(opt);
     });
   }
-</script>
 }
