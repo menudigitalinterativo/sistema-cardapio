@@ -399,5 +399,67 @@
   font-weight: bold;
   margin-bottom: 10px;
 }
+/* ===== Estilização do Campo de Frete e Resumo ===== */
 
+/* Estilo para o seletor de bairros */
+#select-bairro {
+  width: 100%;
+  margin: 8px 0 15px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.95em;
+  color: #333;
+  appearance: none; /* Remove a seta padrão do navegador */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+#select-bairro:focus {
+  border-color: #388e3c;
+  outline: none;
+}
+
+/* Container do Resumo de Valores */
+#resumo-valores {
+  background: #fdfdfd;
+  margin: 15px -16px 0; /* Alinha com as bordas do modal no mobile */
+  padding: 16px;
+  border-top: 1px dashed #ddd;
+}
+
+.linha-resumo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.linha-resumo.total {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #000;
+}
+
+.taxa-entrega-cor {
+  color: #d9534f; /* Vermelho para destacar a taxa */
+  font-weight: bold;
+}
+
+/* Ajuste para o scroll do carrinho não esconder o resumo */
+#cart-items {
+  max-height: 35vh; /* Diminuímos um pouco para caber o seletor de bairro */
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
 
