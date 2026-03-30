@@ -268,4 +268,32 @@ function finalizarPedido() {
       i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none'
     );
   };
+   <script>
+  // Esta função será chamada toda vez que o carrinho abrir ou o bairro mudar
+  function atualizarTotalComFrete() {
+    const select = document.getElementById('select-bairro');
+    const taxa = parseFloat(select.value) || 0;
+    
+    // Pega o subtotal que já existe no seu sistema (script.js)
+    // Se o seu script usa outra variável, ajustaremos aqui
+    const subtotal = window.totalCarrinho || 0; 
+    const total = subtotal + taxa;
+
+    // Escreve os valores nos campos que estavam 0,00
+    document.getElementById('subtotal-carrinho').innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+    document.getElementById('taxa-entrega-display').innerText = `R$ ${taxa.toFixed(2).replace('.', ',')}`;
+    document.getElementById('total-geral').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+  }
+
+  // Função para carregar os bairros no Select assim que o site abrir
+  function carregarBairros(listaFretes) {
+    const select = document.getElementById('select-bairro');
+    listaFretes.forEach(item => {
+      let opt = document.createElement('option');
+      opt.value = item.taxa; // O valor interno é a taxa (ex: 5.00)
+      opt.textContent = `${item.bairro} - R$ ${item.taxa.toFixed(2)}`;
+      select.appendChild(opt);
+    });
+  }
+</script>
 }
