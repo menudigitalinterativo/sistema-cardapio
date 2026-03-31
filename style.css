@@ -472,6 +472,7 @@
   position: sticky;
   top: 0;
   z-index: 1000;
+ padding: 12px 24px;
 }
 
 .header-left {
@@ -501,7 +502,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-right: 40px; 
+  margin-right: 70px; 
 }
 
 .status-dot {
