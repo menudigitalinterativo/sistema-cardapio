@@ -11,7 +11,20 @@
       container.appendChild(t);
       setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 2000);
     }
+function aplicarStatus(info) {
+  const statusText = document.getElementById("status-text");
+  const statusDot = document.getElementById("status-indicator");
 
+  if (!statusText || !statusDot) return;
+
+  if (info.status === "Aberto") {
+    statusText.textContent = "Aberto";
+    statusDot.style.background = "green";
+  } else {
+    statusText.textContent = "Fechado";
+    statusDot.style.background = "red";
+  }
+}
 document.addEventListener('DOMContentLoaded', async () => {
   const progressBar = document.getElementById('main-progress-bar');
   if (progressBar) progressBar.style.width = '15%';
@@ -32,7 +45,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       themeColor = info.siteColor || "#388e3c";
       companyWhatsApp = info.whatsappNumber || '';
       companyStatus = info.status || 'Aberto';
-      
+
+     aplicarStatus(info);
       document.getElementById('company-name').textContent = info.companyName;
       if (info.logoUrl) {
         document.getElementById('company-logo').src = info.logoUrl;
