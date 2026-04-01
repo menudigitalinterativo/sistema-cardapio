@@ -312,6 +312,13 @@ function finalizarPedido() {
 function abrirHorario() {
   document.getElementById('horario-modal').style.display = 'flex';
 }
+function abrirHorario() {
+  document.getElementById('horario-modal').style.display = 'flex';
+}
+
+function fecharHorario() {
+  document.getElementById('horario-modal').style.display = 'none';
+}
 
 function fecharHorario() {
   document.getElementById('horario-modal').style.display = 'none';
