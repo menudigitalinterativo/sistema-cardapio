@@ -466,10 +466,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 16px 16px;
   background: transparent;
-  border: none;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
   z-index: 1000;
+ padding: 12px 24px;
 }
 
 .header-left {
