@@ -467,9 +467,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-
   background: transparent;
   border: none;
+  z-index: 1000;
 }
 
 .header-left {
