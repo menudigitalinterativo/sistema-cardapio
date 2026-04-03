@@ -592,12 +592,10 @@
   to { transform: scale(1); opacity: 1; }
 }
 .modal {
-  display: none; /* começa escondido */
+  display: none;
   position: fixed;
-  z-index: 9999;
-  inset: 0; /* substitui left/top/width/height */
-
-  background-color: rgba(0,0,0,0.6);
+  inset: 0;
+  background: rgba(0,0,0,0.6);
 
   justify-content: center;
   align-items: center;
