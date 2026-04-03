@@ -332,19 +332,19 @@ function carregarBairros(listaFretes) {
 
 function abrirHorarios() {
   const modal = document.getElementById('modal-horarios');
-  if (modal) modal.style.display = 'block';
+  if (modal) modal.classList.add('ativo');
 }
 
 function fecharHorarios() {
   const modal = document.getElementById('modal-horarios');
-  if (modal) modal.style.display = 'none';
+  if (modal) modal.classList.remove('ativo');
 }
 
 // Fecha clicando fora
 window.addEventListener('click', function(e) {
   const modal = document.getElementById('modal-horarios');
   if (e.target === modal) {
-    modal.style.display = 'none';
+    modal.classList.remove('ativo');
   }
 });
 
