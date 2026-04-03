@@ -325,3 +325,118 @@ function carregarBairros(listaFretes) {
     select.appendChild(opt);
   });
 }
+// =========================
+// 🔥 MODAL HORÁRIOS
+// =========================
+
+function abrirHorarios() {
+  const modal = document.getElementById('modal-horarios');
+  if (modal) modal.style.display = 'block';
+}
+
+function fecharHorarios() {
+  const modal = document.getElementById('modal-horarios');
+  if (modal) modal.style.display = 'none';
+}
+
+// Fecha clicando fora
+window.addEventListener('click', function(e) {
+  const modal = document.getElementById('modal-horarios');
+  if (e.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+
+
+// =========================
+// 🔥 RELÓGIO EM TEMPO REAL
+// =========================
+
+function iniciarRelogio() {
+  function atualizar() {
+    const agora = new Date();
+
+    const hora = agora.toLocaleTimeString('pt-BR');
+
+    const data = agora.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    const elHora = document.getElementById('relogio');
+    const elData = document.getElementById('data-atual');
+
+    if (elHora) elHora.innerText = hora;
+    if (elData) elData.innerText = data;
+  }
+
+  atualizar();
+  setInterval(atualizar, 1000);
+}
+
+
+// =========================
+// 🔥 RENDERIZAR HORÁRIOS
+// =========================
+
+function renderHorarios(horarios) {
+  const container = document.getElementById('horarios-container');
+  if (!container || !horarios) return;
+
+  container.innerHTML = '';
+
+  const hoje = new Date().getDay(); // 0 = domingo
+
+  const diasMap = {
+    "Domingo": 0,
+    "Segunda-Feira": 1,
+    "Terça-Feira": 2,
+    "Quarta-Feira": 3,
+    "Quinta-Feira": 4,
+    "Sexta-Feira": 5,
+    "Sábado": 6
+  };
+
+  horarios.forEach(d => {
+    const isHoje = diasMap[d.dia] === hoje;
+
+    const div = document.createElement('div');
+    div.className = 'linha-dia';
+
+    if (isHoje) div.classList.add('dia-hoje');
+
+    const horariosTexto = (d.horarios && d.horarios.length)
+      ? d.horarios.join(' • ')
+      : 'Fechado';
+
+    div.innerHTML = `
+      <div>
+        ${d.dia}
+        ${isHoje ? '<span class="bolinha"></span>' : ''}
+      </div>
+      <div style="font-size:0.9em; color:#555;">
+        ${horariosTexto}
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+
+// =========================
+// 🔥 INTEGRAÇÃO AUTOMÁTICA
+// =========================
+
+// Chame isso depois que carregar o JSON (onde já usa "info")
+function iniciarSistemaHorarios(info) {
+  if (!info) return;
+
+  // Renderiza horários
+  renderHorarios(info.horarios);
+
+  // Inicia relógio
+  iniciarRelogio();
+}
