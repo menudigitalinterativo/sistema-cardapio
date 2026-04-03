@@ -222,13 +222,18 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('cart-total').textContent = t.toFixed(2).replace('.', ',');
     }
 
-    function remove(i) {
-      if(cart[i].qty > 1) cart[i].qty--; else cart.splice(i,1);
-      updateUI();
-    }
+    // 🔥 SALVA TOTAL GLOBAL
+  window.totalCarrinho = t;
+
+  // 🔥 ATUALIZA FRETE + TOTAL
+  atualizarTotalComFrete();
+}
+
 function finalizarPedido() {
   const nomeCliente = document.getElementById('client-name').value.trim();
   const tipoEntrega = document.getElementById('tipo-entrega').value;
+  const selectBairro = document.getElementById('select-bairro');
+  const taxaEntrega = parseFloat(selectBairro.value) || 0;
   
   // Validações
   if (companyStatus !== 'Aberto') return notify("Loja Fechada!");
@@ -236,8 +241,21 @@ function finalizarPedido() {
   if (!nomeCliente) return notify("Por favor, informe seu nome."); 
   if (!tipoEntrega) return notify("Selecione o tipo de entrega.");
  
+  if (tipoEntrega === 'delivery' && !selectBairro.value) {
+    return notify("Selecione o bairro para entrega.");
+  }
+
   let mensagem = 'Olá, gostaria de fazer o pedido:%0A';
   mensagem += `*Cliente:* ${nomeCliente}%0A`;
+ 
+ // 🔥 Tipo de entrega
+  mensagem += `*Entrega:* ${tipoEntrega === 'delivery' ? 'Delivery' : 'Retirada no local'}%0A`;
+
+  // 🔥 Bairro se for delivery
+  if (tipoEntrega === 'delivery') {
+    const nomeBairro = selectBairro.options[selectBairro.selectedIndex].text;
+    mensagem += `*Bairro:* ${nomeBairro}%0A`;
+  }
   let totalGeral = 0;
 
   cart.forEach(item => {
@@ -253,8 +271,17 @@ function finalizarPedido() {
     }
   });
 
-  // Total no final
+ // 🔥 Soma frete se for delivery
+  if (tipoEntrega === 'delivery') {
+    mensagem += `%0A*Taxa de entrega:* R$ ${taxaEntrega.toFixed(2).replace('.', ',')}%0A`;
+    totalGeral += taxaEntrega;
+  }
+
+  // 🔥 Total final
   mensagem += `%0A*Total do Pedido: R$ ${totalGeral.toFixed(2).replace('.', ',')}*`;
+
+  // 🔥 Observação pagamento
+  mensagem += `%0A%0AForma de pagamento será combinada na confirmação.`;
 
   if (!companyWhatsApp) return notify("WhatsApp não configurado!");
 
@@ -263,6 +290,10 @@ function finalizarPedido() {
   // Limpa o carrinho e fecha o modal
   cart = [];
   document.getElementById('client-name').value = '';
+  document.getElementById('tipo-entrega').value = '';
+  document.getElementById('select-bairro').value = '';
+  document.getElementById('box-bairro').style.display = 'none';
+
   updateUI();
   document.getElementById('cart-modal').style.display = 'none';
   notify("Pedido enviado!");
