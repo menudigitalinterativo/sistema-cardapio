@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       companyStatus = info.status || 'Aberto';
 
      aplicarStatus(info);
-     iniciarSistemaHorarios(info); // 👈 ADICIONE APENAS ISSO
+     iniciarSistemaHorarios(res.horarios); // 👈 ADICIONE APENAS ISSO
       document.getElementById('company-name').textContent = info.companyName;
       if (info.logoUrl) {
         document.getElementById('company-logo').src = info.logoUrl;
@@ -429,12 +429,15 @@ function renderHorarios(horarios) {
 // =========================
 
 // Chame isso depois que carregar o JSON (onde já usa "info")
-function iniciarSistemaHorarios(info) {
-  if (!info) return;
+function iniciarSistemaHorarios(horarios) {
+  if (!horarios || !Array.isArray(horarios)) {
+    console.warn("Horários não encontrados ou inválidos");
+    return;
+  }
 
-  // Renderiza horários
-  renderHorarios(info.horarios);
+  // Renderiza os horários no modal
+  renderHorarios(horarios);
 
-  // Inicia relógio
+  // Inicia o relógio em tempo real
   iniciarRelogio();
 }
