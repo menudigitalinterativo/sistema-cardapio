@@ -40,7 +40,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (res.success) {
       const info = res.info;
       const data = res.menu;
-
+      const fretes = res.fretes || [];
+     
       // Configurações visuais (Cores e WhatsApp)
       themeColor = info.siteColor || "#388e3c";
       companyWhatsApp = info.whatsappNumber || '';
@@ -48,6 +49,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
      aplicarStatus(info);
      iniciarSistemaHorarios(res.horarios); // 👈 ADICIONE APENAS ISSO
+     carregarBairros(fretes);
       document.getElementById('company-name').textContent = info.companyName;
       if (info.logoUrl) {
         document.getElementById('company-logo').src = info.logoUrl;
