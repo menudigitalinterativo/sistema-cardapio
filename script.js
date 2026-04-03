@@ -207,25 +207,34 @@ document.addEventListener('DOMContentLoaded', async () => {
       notify("Adicionado!");
     }
 
-    function updateUI() {
-      const list = document.getElementById('cart-items');
-      let t = 0, c = 0; list.innerHTML = '';
-      cart.forEach((item, idx) => {
-        t += item.price * item.qty; c += item.qty;
-        list.innerHTML += `<div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
-          <b>${item.qty}x ${item.name}</b> <span style="float:right">R$ ${(item.price*item.qty).toFixed(2)}</span>
-          <div style="font-size:0.85em; color:#888">${item.opts.map(o => o.qty+'x '+o.name).join(', ')}</div>
-          <button onclick="remove(${idx})" style="color:red; border:none; background:none; cursor:pointer; padding:0; font-size:0.85em">Remover</button>
-        </div>`;
-      });
-      document.getElementById('cart-count').textContent = c;
-      document.getElementById('cart-total').textContent = t.toFixed(2).replace('.', ',');
-    }
+function updateUI() {
+  const list = document.getElementById('cart-items');
+  let t = 0, c = 0; 
+  list.innerHTML = '';
 
-    // 🔥 SALVA TOTAL GLOBAL
+  cart.forEach((item, idx) => {
+    t += item.price * item.qty; 
+    c += item.qty;
+
+    list.innerHTML += `
+      <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
+        <b>${item.qty}x ${item.name}</b> 
+        <span style="float:right">R$ ${(item.price*item.qty).toFixed(2)}</span>
+        <div style="font-size:0.85em; color:#888">
+          ${item.opts.map(o => o.qty+'x '+o.name).join(', ')}
+        </div>
+        <button onclick="remove(${idx})" style="color:red; border:none; background:none; cursor:pointer; padding:0; font-size:0.85em">
+          Remover
+        </button>
+      </div>
+    `;
+  });
+
+  document.getElementById('cart-count').textContent = c;
+  document.getElementById('cart-total').textContent = t.toFixed(2).replace('.', ',');
+
+  // ✅ AGORA SIM, DENTRO DA FUNÇÃO
   window.totalCarrinho = t;
-
-  // 🔥 ATUALIZA FRETE + TOTAL
   atualizarTotalComFrete();
 }
 
