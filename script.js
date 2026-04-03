@@ -228,12 +228,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 function finalizarPedido() {
   const nomeCliente = document.getElementById('client-name').value.trim();
+  const tipoEntrega = document.getElementById('tipo-entrega').value;
   
   // Validações
   if (companyStatus !== 'Aberto') return notify("Loja Fechada!");
   if (!cart.length) return notify("Sacola vazia!");
   if (!nomeCliente) return notify("Por favor, informe seu nome."); 
-
+  if (!tipoEntrega) return notify("Selecione o tipo de entrega.");
+ 
   let mensagem = 'Olá, gostaria de fazer o pedido:%0A';
   mensagem += `*Cliente:* ${nomeCliente}%0A`;
   let totalGeral = 0;
