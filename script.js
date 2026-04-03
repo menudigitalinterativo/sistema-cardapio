@@ -332,7 +332,7 @@ function carregarBairros(listaFretes) {
 
 function abrirHorarios() {
   const modal = document.getElementById('modal-horarios');
-  if (modal) modal.style.display = 'block';
+  if (modal) modal.style.display = 'flex';
 }
 
 function fecharHorarios() {
