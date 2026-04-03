@@ -388,44 +388,41 @@ function renderHorarios(horarios) {
 
   container.innerHTML = '';
 
-  const hoje = new Date().getDay(); // 0 = domingo
+  const hoje = new Date().getDay();
 
   const diasMap = {
     "Domingo": 0,
-    "Segunda-Feira": 1,
-    "Terça-Feira": 2,
-    "Quarta-Feira": 3,
-    "Quinta-Feira": 4,
-    "Sexta-Feira": 5,
+    "Segunda": 1,
+    "Terça": 2,
+    "Quarta": 3,
+    "Quinta": 4,
+    "Sexta": 5,
     "Sábado": 6
   };
 
   horarios.forEach(d => {
     const isHoje = diasMap[d.dia] === hoje;
 
-    const div = document.createElement('div');
-    div.className = 'linha-dia';
-
-    if (isHoje) div.classList.add('dia-hoje');
-
     const horariosTexto = (d.horarios && d.horarios.length)
       ? d.horarios.join(' • ')
       : 'Fechado';
 
+    const div = document.createElement('div');
+    div.style.padding = "10px 0";
+    div.style.borderBottom = "1px solid #eee";
+
     div.innerHTML = `
-      <div>
-        ${d.dia}
-        ${isHoje ? '<span class="bolinha"></span>' : ''}
-      </div>
-      <div style="font-size:0.9em; color:#555;">
+      <strong style="${isHoje ? 'color: green;' : ''}">
+        ${d.dia} ${isHoje ? ' (Hoje)' : ''}
+      </strong><br>
+      <span style="font-size:0.9em;">
         ${horariosTexto}
-      </div>
+      </span>
     `;
 
     container.appendChild(div);
   });
 }
-
 
 // =========================
 // 🔥 INTEGRAÇÃO AUTOMÁTICA
