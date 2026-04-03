@@ -270,7 +270,7 @@ function setupUI() {
     modal.style.display = 'block';
     document.body.classList.add('modal-open');
 
-    atualizarTotalComFrete(); // 🔥 já atualiza ao abrir
+    atualizarTotalComFrete(); // 🔥 atualiza ao abrir
   };
 
   document.getElementById('close-cart').onclick = () => {
@@ -283,6 +283,20 @@ function setupUI() {
     document.querySelectorAll('.menu-item').forEach(i =>
       i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none'
     );
+  };
+
+  // 🔥 CONTROLE DO TIPO DE ENTREGA
+  document.getElementById('tipo-entrega').onchange = function () {
+    const box = document.getElementById('box-bairro');
+
+    if (this.value === 'delivery') {
+      box.style.display = 'block';
+    } else {
+      box.style.display = 'none';
+      document.getElementById('select-bairro').value = '';
+    }
+
+    atualizarTotalComFrete(); // 🔥 recalcula ao mudar tipo
   };
 
   // 🔥 Atualiza quando muda o bairro
