@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       companyStatus = info.status || 'Aberto';
 
      aplicarStatus(info);
+     iniciarSistemaHorarios(info); // 👈 ADICIONE APENAS ISSO
       document.getElementById('company-name').textContent = info.companyName;
       if (info.logoUrl) {
         document.getElementById('company-logo').src = info.logoUrl;
