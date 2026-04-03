@@ -308,26 +308,5 @@ function finalizarPedido() {
       select.appendChild(opt);
     });
   }
-   function abrirHorario() {
-  const modal = document.getElementById('horario-modal');
-  const lista = document.getElementById('lista-horarios');
-
-  lista.innerHTML = '';
-
-  if (!horarios.length) {
-    lista.innerHTML = '<p>Horários não cadastrados</p>';
-  } else {
-    horarios.forEach(h => {
-      lista.innerHTML += `
-        <div style="padding:8px 0; border-bottom:1px solid #eee;">
-          <strong>${h.dia}</strong><br>
-          <span>${h.abertura} às ${h.fechamento}</span>
-        </div>
-      `;
-    });
-  }
-
-  modal.style.display = 'flex';
-}
 }
 
