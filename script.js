@@ -262,13 +262,14 @@ function finalizarPedido() {
   document.getElementById('cart-modal').style.display = 'none';
   notify("Pedido enviado!");
 }
-
-  function setupUI() {
+function setupUI() {
   const modal = document.getElementById('cart-modal');
 
   document.getElementById('cart-float').onclick = () => {
     modal.style.display = 'block';
     document.body.classList.add('modal-open');
+
+    atualizarTotalComFrete(); // 🔥 já atualiza ao abrir
   };
 
   document.getElementById('close-cart').onclick = () => {
@@ -282,31 +283,45 @@ function finalizarPedido() {
       i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none'
     );
   };
-  // Esta função será chamada toda vez que o carrinho abrir ou o bairro mudar
-  function atualizarTotalComFrete() {
-    const select = document.getElementById('select-bairro');
-    const taxa = parseFloat(select.value) || 0;
-    
-    // Pega o subtotal que já existe no seu sistema (script.js)
-    // Se o seu script usa outra variável, ajustaremos aqui
-    const subtotal = window.totalCarrinho || 0; 
-    const total = subtotal + taxa;
 
-    // Escreve os valores nos campos que estavam 0,00
-    document.getElementById('subtotal-carrinho').innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-    document.getElementById('taxa-entrega-display').innerText = `R$ ${taxa.toFixed(2).replace('.', ',')}`;
-    document.getElementById('total-geral').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-  }
+  // 🔥 Atualiza quando muda o bairro
+  document.getElementById('select-bairro').onchange = atualizarTotalComFrete;
+}
+// =========================
+// 🔥 FORA DA FUNÇÃO (GLOBAL)
+// =========================
 
-  // Função para carregar os bairros no Select assim que o site abrir
-  function carregarBairros(listaFretes) {
-    const select = document.getElementById('select-bairro');
-    listaFretes.forEach(item => {
-      let opt = document.createElement('option');
-      opt.value = item.taxa; // O valor interno é a taxa (ex: 5.00)
-      opt.textContent = `${item.bairro} - R$ ${item.taxa.toFixed(2)}`;
-      select.appendChild(opt);
-    });
-  }
+function atualizarTotalComFrete() {
+  const select = document.getElementById('select-bairro');
+  const taxa = parseFloat(select.value) || 0;
+
+  const subtotal = window.totalCarrinho || 0; 
+  const total = subtotal + taxa;
+
+  document.getElementById('subtotal-carrinho').innerText =
+    `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+
+  document.getElementById('taxa-entrega-display').innerText =
+    `R$ ${taxa.toFixed(2).replace('.', ',')}`;
+
+  document.getElementById('total-geral').innerText =
+    `R$ ${total.toFixed(2).replace('.', ',')}`;
 }
 
+
+// =========================
+// 🔥 CARREGAR BAIRROS
+// =========================
+
+function carregarBairros(listaFretes) {
+  const select = document.getElementById('select-bairro');
+
+  select.innerHTML = '<option value="">Selecione o bairro</option>';
+
+  listaFretes.forEach(item => {
+    let opt = document.createElement('option');
+    opt.value = item.taxa;
+    opt.textContent = `${item.bairro} - R$ ${item.taxa.toFixed(2)}`;
+    select.appendChild(opt);
+  });
+}
