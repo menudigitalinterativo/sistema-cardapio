@@ -330,8 +330,12 @@ function setupUI() {
   document.querySelectorAll('.menu-item').forEach(item => {
     const nome = normalizarTexto(item.querySelector('.item-name')?.innerText || '');
     const desc = normalizarTexto(item.querySelector('.item-description')?.innerText || '');
+    const categoria = normalizarTexto(item.querySelector('.item-details')?.dataset.categoria || '');
 
-    const match = nome.includes(termo) || desc.includes(termo);
+    const match =
+    nome.includes(termo) ||
+    desc.includes(termo) ||
+    categoria.includes(termo);
 
     item.style.display = match ? 'flex' : 'none';
 
