@@ -323,12 +323,46 @@ function setupUI() {
   };
 
   document.getElementById('search-input').oninput = (e) => {
-    const v = e.target.value.toLowerCase();
-    document.querySelectorAll('.menu-item').forEach(i =>
-      i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none'
-    );
-  };
+  const termo = normalizarTexto(e.target.value);
 
+  let encontrou = false;
+
+  document.querySelectorAll('.menu-item').forEach(item => {
+    const nome = normalizarTexto(item.querySelector('.item-name')?.innerText || '');
+    const desc = normalizarTexto(item.querySelector('.item-description')?.innerText || '');
+
+    const match = nome.includes(termo) || desc.includes(termo);
+
+    item.style.display = match ? 'flex' : 'none';
+
+    if (match) encontrou = true;
+  });
+
+  // 🔥 (opcional) mensagem se não encontrou
+  let aviso = document.getElementById('nenhum-resultado');
+
+  if (!encontrou) {
+    if (!aviso) {
+      aviso = document.createElement('div');
+      aviso.id = 'nenhum-resultado';
+      aviso.style.padding = '20px';
+      aviso.style.textAlign = 'center';
+      aviso.style.color = '#888';
+      aviso.innerText = 'Nenhum item encontrado';
+      document.getElementById('menu-content').appendChild(aviso);
+    }
+  } else {
+    if (aviso) aviso.remove();
+  }
+};
+ // 🔥 REFINO DA BUSCA
+ function normalizarTexto(texto) {
+  return texto
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // remove acentos
+    .replace(/[^a-z0-9\s]/g, ""); // remove símbolos tipo "-"
+}
   // 🔥 CONTROLE DO TIPO DE ENTREGA
   document.getElementById('tipo-entrega').onchange = function () {
     const box = document.getElementById('box-bairro');
