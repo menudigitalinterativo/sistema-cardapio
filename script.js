@@ -231,10 +231,10 @@ function updateUI() {
   });
 
   document.getElementById('cart-count').textContent = c;
-  document.getElementById('cart-total').textContent = t.toFixed(2).replace('.', ',');
-
-  // ✅ AGORA SIM, DENTRO DA FUNÇÃO
+  // 🔥 ESSENCIAL
   window.totalCarrinho = t;
+
+  // 🔥 ATUALIZA TUDO
   atualizarTotalComFrete();
 }
 
