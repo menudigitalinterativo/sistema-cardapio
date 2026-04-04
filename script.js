@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       
       div.innerHTML = `
         ${img ? `<img src="${img}" class="item-image" loading="lazy">` : ''}
-        <div class="item-details">
+         <div class="item-details" data-categoria="${item.Categoria || ''}">
           <div class="item-header-clickable" onclick="toggle(this, ${item.type === 'complex'})">
             <span class="item-name">${item.Nome}</span>
             ${item.type === 'complex' ? '<i class="fas fa-chevron-down toggle-icon"></i>' : ''}
