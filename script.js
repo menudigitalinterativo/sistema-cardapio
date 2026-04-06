@@ -148,27 +148,36 @@ document.addEventListener('DOMContentLoaded', async () => {
       content.appendChild(div);
     }
 
-    function renderOptions(item) {
-      let h = '';
-      for (let k in item) {
-        if (item[k]?.items) {
-          h += `<div class="option-group">
-            <h4>${k} (Até ${item[k].limit})</h4>
-            ${item[k].items.map(o => `
-              <div class="option-list-item">
-                <span>${o}</span>
-                <div class="quantity-controls">
-                  <button onclick="qty(this,-1)">-</button>
-                  <input type="number" value="0" data-opt="${o}" data-limit="${item[k].limit}" readonly>
-                  <button onclick="qty(this,1)">+</button>
-                </div>
-              </div>
-            `).join('')}
-          </div>`;
-        }
-      }
-      return h;
+function renderOptions(item) {
+  let h = '';
+  for (let k in item) {
+    if (item[k]?.items) {
+      h += `<div class="option-group">
+        <h4>${k} (Até ${item[k].limit})</h4>
+        ${item[k].items.map(o => `
+          <div class="option-list-item">
+            <span>
+              ${o.name}
+              ${o.extra && o.extra > 0 
+                ? ` <small style="color:#888;">(+ R$ ${o.extra.toFixed(2).replace('.', ',')})</small>` 
+                : ''}
+            </span>
+            <div class="quantity-controls">
+              <button onclick="qty(this,-1)">-</button>
+              <input type="number" value="0"
+                     data-opt="${o.name}"
+                     data-extra="${o.extra || 0}"
+                     data-limit="${item[k].limit}"
+                     readonly>
+              <button onclick="qty(this,1)">+</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
     }
+  }
+  return h;
+}
 
     function toggle(el, isComplex) {
       if(!isComplex) return;
@@ -192,10 +201,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     function add(btn, name, price, isComplex) {
       if(companyStatus !== 'Aberto') return notify("Loja Fechada!");
       let opts = [];
-      if(isComplex) {
-        btn.closest('.options-and-footer-container').querySelectorAll('input').forEach(i => {
-          if(parseInt(i.value) > 0) opts.push({name: i.dataset.opt, qty: i.value});
-        });
+Copiar
+
+if (isComplex) {
+  btn.closest('.options-and-footer-container').querySelectorAll('input').forEach(i => {
+    const qtd = parseInt(i.value);
+    if (qtd > 0) {
+      const extra = parseFloat(i.dataset.extra || '0');
+      opts.push({
+        name: i.dataset.opt,
+        qty: qtd,
+        extra: extra
+      });
+    }
+  });
         if(!opts.length) return notify("Escolha uma opção!");
         btn.closest('.options-and-footer-container').querySelectorAll('input').forEach(i => i.value = 0);
         toggle(btn.closest('.item-details').querySelector('.item-header-clickable'), true);
@@ -213,15 +232,33 @@ function updateUI() {
   list.innerHTML = '';
 
   cart.forEach((item, idx) => {
-    t += item.price * item.qty; 
+    // preço base do item
+    let itemBase = item.price * item.qty;
+
+    // soma dos adicionais
+    let adicionais = 0;
+    if (item.opts && item.opts.length) {
+      item.opts.forEach(o => {
+        const extra = o.extra || 0;
+        adicionais += extra * o.qty * item.qty;
+      });
+    }
+
+    const totalItem = itemBase + adicionais;
+    t += totalItem;
     c += item.qty;
 
     list.innerHTML += `
       <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
         <b>${item.qty}x ${item.name}</b> 
-        <span style="float:right">R$ ${(item.price*item.qty).toFixed(2)}</span>
+        <span style="float:right">R$ ${totalItem.toFixed(2).replace('.', ',')}</span>
         <div style="font-size:0.85em; color:#888">
-          ${item.opts.map(o => o.qty+'x '+o.name).join(', ')}
+          ${item.opts.map(o => {
+            const extraTxt = o.extra && o.extra > 0
+              ? ` (+R$ ${o.extra.toFixed(2).replace('.', ',')})`
+              : '';
+            return `${o.qty}x ${o.name}${extraTxt}`;
+          }).join(', ')}
         </div>
         <button onclick="remove(${idx})" style="color:red; border:none; background:none; cursor:pointer; padding:0; font-size:0.85em">
           Remover
@@ -231,11 +268,8 @@ function updateUI() {
   });
 
   document.getElementById('cart-count').textContent = c;
-  // 🔥 ESSENCIAL
-  window.totalCarrinho = t;
-
-  // 🔥 ATUALIZA TUDO
-  atualizarTotalComFrete();
+  window.totalCarrinho = t;        // ✅ subtotal já inclui adicionais
+  atualizarTotalComFrete();        // ✅ soma frete por cima
 }
 
 function finalizarPedido() {
@@ -265,20 +299,35 @@ function finalizarPedido() {
     const nomeBairro = selectBairro.options[selectBairro.selectedIndex].text;
     mensagem += `*Bairro:* ${nomeBairro}%0A`;
   }
-  let totalGeral = 0;
+ let totalGeral = 0;
 
-  cart.forEach(item => {
-    const subTotal = item.price * item.qty;
-    totalGeral += subTotal;
+cart.forEach(item => {
+  let itemBase = item.price * item.qty;
+  let adicionais = 0;
 
-    // Item principal
-    mensagem += `%0A${item.qty}x ${item.name} - R$ ${subTotal.toFixed(2).replace('.', ',')}%0A`;
+  if (item.opts && item.opts.length) {
+    item.opts.forEach(o => {
+      const extra = o.extra || 0;
+      adicionais += extra * o.qty * item.qty;
+    });
+  }
 
-    // Opcionais (um embaixo do outro)
-    if (item.opts && item.opts.length > 0) {
-      mensagem += item.opts.map(o => `• ${o.qty}x ${o.name}`).join('%0A') + '%0A';
-    }
-  });
+  const totalItem = itemBase + adicionais;
+  totalGeral += totalItem;
+
+  // Linha principal do item com total já incluindo adicionais
+  mensagem += `%0A${item.qty}x ${item.name} - R$ ${totalItem.toFixed(2).replace('.', ',')}%0A`;
+
+  // Detalhe dos adicionais
+  if (item.opts && item.opts.length > 0) {
+    mensagem += item.opts.map(o => {
+      const extraTxt = o.extra && o.extra > 0
+        ? ` (+R$ ${o.extra.toFixed(2).replace('.', ',')})`
+        : '';
+      return `• ${o.qty}x ${o.name}${extraTxt}`;
+    }).join('%0A') + '%0A';
+  }
+});
 
  // 🔥 Soma frete se for delivery
   if (tipoEntrega === 'delivery') {
