@@ -228,15 +228,13 @@ if (isComplex) {
 
 function updateUI() {
   const list = document.getElementById('cart-items');
-  let t = 0, c = 0; 
+  let t = 0, c = 0;
   list.innerHTML = '';
 
   cart.forEach((item, idx) => {
-    // preço base do item
     let itemBase = item.price * item.qty;
-
-    // soma dos adicionais
     let adicionais = 0;
+
     if (item.opts && item.opts.length) {
       item.opts.forEach(o => {
         const extra = o.extra || 0;
@@ -253,7 +251,7 @@ function updateUI() {
         <b>${item.qty}x ${item.name}</b> 
         <span style="float:right">R$ ${totalItem.toFixed(2).replace('.', ',')}</span>
         <div style="font-size:0.85em; color:#888">
-          ${item.opts.map(o => {
+          ${(item.opts || []).map(o => {
             const extraTxt = o.extra && o.extra > 0
               ? ` (+R$ ${o.extra.toFixed(2).replace('.', ',')})`
               : '';
@@ -268,8 +266,8 @@ function updateUI() {
   });
 
   document.getElementById('cart-count').textContent = c;
-  window.totalCarrinho = t;        // ✅ subtotal já inclui adicionais
-  atualizarTotalComFrete();        // ✅ soma frete por cima
+  window.totalCarrinho = t;
+  atualizarTotalComFrete();
 }
 
 function finalizarPedido() {
@@ -315,10 +313,8 @@ cart.forEach(item => {
   const totalItem = itemBase + adicionais;
   totalGeral += totalItem;
 
-  // Linha principal do item com total já incluindo adicionais
   mensagem += `%0A${item.qty}x ${item.name} - R$ ${totalItem.toFixed(2).replace('.', ',')}%0A`;
 
-  // Detalhe dos adicionais
   if (item.opts && item.opts.length > 0) {
     mensagem += item.opts.map(o => {
       const extraTxt = o.extra && o.extra > 0
@@ -328,7 +324,6 @@ cart.forEach(item => {
     }).join('%0A') + '%0A';
   }
 });
-
  // 🔥 Soma frete se for delivery
   if (tipoEntrega === 'delivery') {
     mensagem += `%0A*Taxa de entrega:* R$ ${taxaEntrega.toFixed(2).replace('.', ',')}%0A`;
