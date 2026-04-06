@@ -201,7 +201,6 @@ function renderOptions(item) {
     function add(btn, name, price, isComplex) {
       if(companyStatus !== 'Aberto') return notify("Loja Fechada!");
       let opts = [];
-Copiar
 
 if (isComplex) {
   btn.closest('.options-and-footer-container').querySelectorAll('input').forEach(i => {
