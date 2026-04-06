@@ -239,13 +239,14 @@ function updateUI() {
   let t = 0, c = 0;
   list.innerHTML = '';
 
-  cart.forEach((item, idx) => {
-    let itemBase = item.price * item.qty;
-    let adicionais = 0;
+ cart.forEach((item, idx) => {
+  const price = parseFloat(item.price) || 0;
+  let itemBase = price * item.qty;
+  let adicionais = 0;
 
     if (item.opts && item.opts.length) {
       item.opts.forEach(o => {
-        const extra = o.extra || 0;
+        const extra = parseFloat(o.extra) || 0;
         adicionais += extra * o.qty * item.qty;
       });
     }
@@ -257,7 +258,7 @@ function updateUI() {
     list.innerHTML += `
       <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
         <b>${item.qty}x ${item.name}</b> 
-        <span style="float:right">R$ ${totalItem.toFixed(2).replace('.', ',')}</span>
+        <span style="float:right">R$ ${formatarPreco(totalItem)}</span>
         <div style="font-size:0.85em; color:#888">
           ${(item.opts || []).map(o => {
             const extraTxt = o.extra && o.extra > 0
