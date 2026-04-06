@@ -11,6 +11,15 @@
       container.appendChild(t);
       setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 2000);
     }
+function formatarPreco(valor) {
+  const num = parseFloat(valor);
+
+  if (isNaN(num) || valor === '' || valor === null || valor === undefined) {
+    return '';
+  }
+
+  return `R$ ${num.toFixed(2).replace('.', ',')}`;
+}
 function aplicarStatus(info) {
   const statusText = document.getElementById("status-text");
   const statusDot = document.getElementById("status-indicator");
@@ -134,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
           <div class="item-description">${item.Descrição || ''}</div>
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span class="item-price">R$ ${parseFloat(item.Valor).toFixed(2).replace('.', ',')}</span>
+            <span class="item-price">${formatarPreco(item.Valor)}</span>
             ${item.type === 'simple' ? `<button class="add-to-cart-btn" onclick="add(this, '${item.Nome}', ${item.Valor}, false)">Adicionar</button>` : ''}
           </div>
           <div class="options-and-footer-container">
