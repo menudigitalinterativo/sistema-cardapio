@@ -159,10 +159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       `;
       content.appendChild(div);
     }
-
-// variável global para nomes das opções (vem do JSON)
-let optionNames = {};
-
 function renderOptions(item) {
   let h = '';
 
@@ -293,7 +289,7 @@ function updateUI() {
     list.innerHTML += `
       <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
         <b>${item.qty}x ${item.name}</b> 
-        <span style="float:right">R$ ${formatarPreco(totalItem)}</span>
+       <span style="float:right">${formatarPreco(totalItem)}</span>
         <div style="font-size:0.85em; color:#888">
           ${(item.opts || []).map(o => {
             const extraTxt = o.extra && o.extra > 0
