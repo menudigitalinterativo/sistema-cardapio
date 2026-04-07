@@ -147,12 +147,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="item-description">${item.Descrição || ''}</div>
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span class="item-price">${formatarPreco(item.Valor)}</span>
-            ${item.type === 'simple' ? `<button class="add-to-cart-btn" onclick="add(this, '${item.Nome}', ${item.Valor}, false)">Adicionar</button>` : ''}
+            ${item.type === 'simple' ? `<button class="add-to-cart-btn" onclick="add(this, '${item.Nome}', '${item.Valor}', false)">Adicionar</button>` : ''}
           </div>
           <div class="options-and-footer-container">
             ${item.type === 'complex' ? renderOptions(item) : ''}
             <div class="footer-action">
-              <button class="add-to-cart-btn" onclick="add(this, '${item.Nome}', ${item.Valor}, true)">Adicionar</button>
+              <button class="add-to-cart-btn" onclick="add(this, '${item.Nome}', '${item.Valor}, true)">Adicionar</button>
             </div>
           </div>
         </div>
