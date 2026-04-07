@@ -162,6 +162,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 // variável global para nomes das opções (vem do JSON)
 let optionNames = {};
 
+// variável global para nomes das opções (vem do JSON)
+let optionNames = {};
+
 function renderOptions(item) {
   let h = '';
 
@@ -171,7 +174,9 @@ function renderOptions(item) {
     const grupo = item[k];
 
     // k é algo como "Opção 1", "Opção 2"...
-const match = k.match(/Opção\s+(\d+)/i);
+    const match = k.match(/
+^
+Opção\s+(\d+)/i);
     let titulo = k;
 
     if (match && optionNames) {
@@ -184,21 +189,15 @@ const match = k.match(/Opção\s+(\d+)/i);
 
     h += `<div class="option-group">
       <h4>${titulo} (Até ${grupo.limit})</h4>
-      ${grupo.items.map(str => {
-        // garante que str é string
-        const raw = (str == null ? '' : String(str)).trim();
-        if (!raw) return ''; // ignora células vazias
+      ${grupo.items.map(obj => {
+        if (!obj) return '';
 
-        // Formato: "Banana Sliced|0,10" ou só "Banana Sliced"
-        const [nomeBruto, extraBruto] = raw.split('|').map(s => (s || '').trim());
+        // Agora tratamos como OBJETO
+        const nomeBruto = (obj.name || '').trim();
+        const extraNum  = parseFloat(obj.extra || 0) || 0;
 
-        let extra = 0;
-        if (extraBruto) {
-          extra = parseFloat(extraBruto.replace(',', '.')) || 0;
-        }
-
-        const extraLabel = extra > 0
-          ? ` <small style="color:#888;">(+ R$ ${extra.toFixed(2).replace('.', ',')})</small>`
+        const extraLabel = extraNum > 0
+          ? ` <small style="color:#888;">(+ R$ ${extraNum.toFixed(2).replace('.', ',')})</small>`
           : '';
 
         return `
@@ -208,7 +207,7 @@ const match = k.match(/Opção\s+(\d+)/i);
               <button onclick="qty(this,-1)">-</button>
               <input type="number" value="0"
                      data-opt="${nomeBruto}"
-                     data-extra="${extra}"
+                     data-extra="${extraNum}"
                      data-limit="${grupo.limit}"
                      readonly>
               <button onclick="qty(this,1)">+</button>
