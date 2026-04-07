@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = res.menu;
       const fretes = res.fretes || [];
      
+     optionNames = (info && info.optionNames) ? info.optionNames : {};
+     
       // Configurações visuais (Cores e WhatsApp)
       themeColor = info.siteColor || "#388e3c";
       companyWhatsApp = info.whatsappNumber || '';
@@ -157,34 +159,66 @@ document.addEventListener('DOMContentLoaded', async () => {
       content.appendChild(div);
     }
 
+// variável global para nomes das opções (vem do JSON)
+let optionNames = {};
+
 function renderOptions(item) {
   let h = '';
+
   for (let k in item) {
-    if (item[k]?.items) {
-      h += `<div class="option-group">
-        <h4>${k} (Até ${item[k].limit})</h4>
-        ${item[k].items.map(o => `
+    if (!item[k] || !item[k].items) continue;
+
+    const grupo = item[k];
+
+    // k é algo como "Opção 1", "Opção 2"...
+const match = k.match(/Opção\s+(\d+)/i);
+    let titulo = k;
+
+    if (match && optionNames) {
+      const idx = match[1]; // "1", "2", ...
+      const personalizado = optionNames[idx];
+      if (personalizado && personalizado.trim()) {
+        titulo = personalizado.trim();
+      }
+    }
+
+    h += `<div class="option-group">
+      <h4>${titulo} (Até ${grupo.limit})</h4>
+      ${grupo.items.map(str => {
+        // garante que str é string
+        const raw = (str == null ? '' : String(str)).trim();
+        if (!raw) return ''; // ignora células vazias
+
+        // Formato: "Banana Sliced|0,10" ou só "Banana Sliced"
+        const [nomeBruto, extraBruto] = raw.split('|').map(s => (s || '').trim());
+
+        let extra = 0;
+        if (extraBruto) {
+          extra = parseFloat(extraBruto.replace(',', '.')) || 0;
+        }
+
+        const extraLabel = extra > 0
+          ? ` <small style="color:#888;">(+ R$ ${extra.toFixed(2).replace('.', ',')})</small>`
+          : '';
+
+        return `
           <div class="option-list-item">
-            <span>
-              ${o.name}
-              ${o.extra && o.extra > 0 
-                ? ` <small style="color:#888;">(+ R$ ${o.extra.toFixed(2).replace('.', ',')})</small>` 
-                : ''}
-            </span>
+            <span>${nomeBruto}${extraLabel}</span>
             <div class="quantity-controls">
               <button onclick="qty(this,-1)">-</button>
               <input type="number" value="0"
-                     data-opt="${o.name}"
-                     data-extra="${o.extra || 0}"
-                     data-limit="${item[k].limit}"
+                     data-opt="${nomeBruto}"
+                     data-extra="${extra}"
+                     data-limit="${grupo.limit}"
                      readonly>
               <button onclick="qty(this,1)">+</button>
             </div>
           </div>
-        `).join('')}
-      </div>`;
-    }
+        `;
+      }).join('')}
+    </div>`;
   }
+
   return h;
 }
 
