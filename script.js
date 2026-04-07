@@ -1,7 +1,8 @@
  let cart = [];
-    let companyWhatsApp = '';
-    let themeColor = "#388e3c";
-    let companyStatus = "Aberto";
+let companyWhatsApp = '';
+let themeColor = "#388e3c";
+let companyStatus = "Aberto";
+let optionNames = {}; 
 
     function notify(msg) {
       const container = document.getElementById('toast-container');
