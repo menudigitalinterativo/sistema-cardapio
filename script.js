@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           <div class="options-and-footer-container">
             ${item.type === 'complex' ? renderOptions(item) : ''}
             <div class="footer-action">
-              <button class="add-to-cart-btn" onclick="add(this, '${item.Nome}', '${item.Valor}, true)">Adicionar</button>
+            <button class="add-to-cart-btn" onclick="add(this, '${item.Nome}', '${item.Valor}', true)">Adicionar</button>
             </div>
           </div>
         </div>
@@ -231,14 +231,15 @@ function renderOptions(item) {
     function qty(btn, d) {
       const i = btn.parentElement.querySelector('input');
       const group = i.closest('.option-group').querySelectorAll('input');
-      let t = 0; group.forEach(g => t += parseInt(g.value));
-      let cur = parseInt(i.value);
+     let t = 0; group.forEach(g => t += parseInt(g.value) || 0);
+     let cur = parseInt(i.value) || 0;
       if(d > 0 && t < i.dataset.limit) i.value = cur + 1;
       else if(d < 0 && cur > 0) i.value = cur - 1;
       else if(d > 0) notify("Limite atingido!");
     }
 
     function add(btn, name, price, isComplex) {
+     price = parseFloat(String(price).replace(',', '.')) || 0;
       if(companyStatus !== 'Aberto') return notify("Loja Fechada!");
       let opts = [];
 
