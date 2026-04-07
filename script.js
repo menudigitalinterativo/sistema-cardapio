@@ -162,9 +162,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 // variável global para nomes das opções (vem do JSON)
 let optionNames = {};
 
-// variável global para nomes das opções (vem do JSON)
-let optionNames = {};
-
 function renderOptions(item) {
   let h = '';
 
@@ -174,11 +171,10 @@ function renderOptions(item) {
     const grupo = item[k];
 
     // k é algo como "Opção 1", "Opção 2"...
-    const match = k.match(/
-^
-Opção\s+(\d+)/i);
+    const match = k.match(/Opção\s+(\d+)/i);
     let titulo = k;
 
+    // Se tiver Nome Opção 1..7 na aba Configurações
     if (match && optionNames) {
       const idx = match[1]; // "1", "2", ...
       const personalizado = optionNames[idx];
@@ -189,15 +185,21 @@ Opção\s+(\d+)/i);
 
     h += `<div class="option-group">
       <h4>${titulo} (Até ${grupo.limit})</h4>
-      ${grupo.items.map(obj => {
-        if (!obj) return '';
+      ${grupo.items.map(str => {
+        // garante que str é string
+        const raw = (str == null ? '' : String(str)).trim();
+        if (!raw) return ''; // ignora células vazias
 
-        // Agora tratamos como OBJETO
-        const nomeBruto = (obj.name || '').trim();
-        const extraNum  = parseFloat(obj.extra || 0) || 0;
+        // Formato: "Banana Sliced|0,10" ou só "Banana Sliced"
+        const [nomeBruto, extraBruto] = raw.split('|').map(s => (s || '').trim());
 
-        const extraLabel = extraNum > 0
-          ? ` <small style="color:#888;">(+ R$ ${extraNum.toFixed(2).replace('.', ',')})</small>`
+        let extra = 0;
+        if (extraBruto) {
+          extra = parseFloat(extraBruto.replace(',', '.')) || 0;
+        }
+
+        const extraLabel = extra > 0
+          ? ` <small style="color:#888;">(+ R$ ${extra.toFixed(2).replace('.', ',')})</small>`
           : '';
 
         return `
@@ -207,7 +209,7 @@ Opção\s+(\d+)/i);
               <button onclick="qty(this,-1)">-</button>
               <input type="number" value="0"
                      data-opt="${nomeBruto}"
-                     data-extra="${extraNum}"
+                     data-extra="${extra}"
                      data-limit="${grupo.limit}"
                      readonly>
               <button onclick="qty(this,1)">+</button>
@@ -220,7 +222,6 @@ Opção\s+(\d+)/i);
 
   return h;
 }
-
     function toggle(el, isComplex) {
       if(!isComplex) return;
       const box = el.parentElement.querySelector('.options-and-footer-container');
