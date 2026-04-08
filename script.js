@@ -167,46 +167,56 @@ function renderOptions(item) {
 
     const grupo = item[k];
 
-    // k é algo como "Opção 1", "Opção 2"...
+    // 🔥 TÍTULO PERSONALIZADO
     const match = k.match(/Opção\s+(\d+)/i);
     let titulo = k;
 
-    // Se tiver Nome Opção 1..7 na aba Configurações
     if (match && optionNames) {
-      const idx = match[1]; // "1", "2", ...
+      const idx = match[1];
       const personalizado = optionNames[idx];
+
       if (personalizado && personalizado.trim()) {
         titulo = personalizado.trim();
       }
     }
 
-    h += `<div class="option-group">
-      <h4>${titulo} (Até ${grupo.limit})</h4>
-      ${grupo.items.map(str => {
-        // garante que str é string
-        if (!str) return '';
+    h += `
+      <div class="option-group">
+        <h4>${titulo} (Até ${grupo.limit})</h4>
+    `;
 
-let nomeBruto = '';
-let extra = 0;
+    h += grupo.items.flatMap(str => {
 
-// 🧠 Se vier como OBJETO (novo formato)
-if (typeof str === 'object') {
-  nomeBruto = str.nome || str.name || '';
-  extra = parseFloat(String(str.valor || str.price || 0).replace(',', '.')) || 0;
-} 
-// 🧠 Se vier como STRING (formato antigo)
-else {
-  const raw = String(str).trim();
-  const partes = raw.split('|');
+      if (!str) return [];
 
-  nomeBruto = (partes[0] || '').trim();
+      // 🔥 Se vier como string com vários itens
+      const lista = typeof str === 'string'
+        ? str.split(',')
+        : [str];
 
-  if (partes[1]) {
-    extra = parseFloat(partes[1].replace(',', '.')) || 0;
-  }
-}
+      return lista.map(item => {
 
-          const extraLabel = extra > 0
+        let nomeBruto = '';
+        let extra = 0;
+
+        // 🧠 OBJETO (formato antigo)
+        if (typeof item === 'object') {
+          nomeBruto = item.name || item.nome || '';
+          extra = parseFloat(item.extra || item.valor || 0) || 0;
+        }
+
+        // 🧠 STRING (formato planilha)
+        else {
+          const partes = String(item).trim().split('|');
+
+          nomeBruto = (partes[0] || '').trim();
+
+          if (partes[1]) {
+            extra = parseFloat(partes[1].replace(',', '.')) || 0;
+          }
+        }
+
+        const extraLabel = extra > 0
           ? ` <small style="color:#888;">(+ R$ ${extra.toFixed(2).replace('.', ',')})</small>`
           : '';
 
@@ -224,8 +234,11 @@ else {
             </div>
           </div>
         `;
-      }).join('')}
-    </div>`;
+      });
+
+    }).join('');
+
+    h += `</div>`;
   }
 
   return h;
