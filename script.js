@@ -206,12 +206,7 @@ else {
   }
 }
 
-        let extra = 0;
-        if (extraBruto) {
-          extra = parseFloat(extraBruto.replace(',', '.')) || 0;
-        }
-
-        const extraLabel = extra > 0
+          const extraLabel = extra > 0
           ? ` <small style="color:#888;">(+ R$ ${extra.toFixed(2).replace('.', ',')})</small>`
           : '';
 
