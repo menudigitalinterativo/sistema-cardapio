@@ -184,11 +184,27 @@ function renderOptions(item) {
       <h4>${titulo} (Até ${grupo.limit})</h4>
       ${grupo.items.map(str => {
         // garante que str é string
-        const raw = (str == null ? '' : String(str)).trim();
-        if (!raw) return ''; // ignora células vazias
+        if (!str) return '';
 
-        // Formato: "Banana Sliced|0,10" ou só "Banana Sliced"
-        const [nomeBruto, extraBruto] = raw.split('|').map(s => (s || '').trim());
+let nomeBruto = '';
+let extra = 0;
+
+// 🧠 Se vier como OBJETO (novo formato)
+if (typeof str === 'object') {
+  nomeBruto = str.nome || str.name || '';
+  extra = parseFloat(String(str.valor || str.price || 0).replace(',', '.')) || 0;
+} 
+// 🧠 Se vier como STRING (formato antigo)
+else {
+  const raw = String(str).trim();
+  const partes = raw.split('|');
+
+  nomeBruto = (partes[0] || '').trim();
+
+  if (partes[1]) {
+    extra = parseFloat(partes[1].replace(',', '.')) || 0;
+  }
+}
 
         let extra = 0;
         if (extraBruto) {
