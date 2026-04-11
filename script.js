@@ -35,6 +35,54 @@ function aplicarStatus(info) {
     statusDot.style.background = "red";
   }
 }
+function aplicarFooter(info) {
+  if (!info) return;
+
+  // Nome
+  const nome = document.getElementById('footer-name');
+  if (nome) nome.textContent = info.companyName || '';
+
+  // Endereço
+  const endereco = document.getElementById('footer-address');
+  if (endereco) endereco.textContent = info.address || '';
+
+  // Telefone
+  const telefone = document.getElementById('footer-phone');
+  if (telefone) telefone.textContent = info.whatsappNumber || '';
+
+  // Instagram
+  const insta = document.getElementById('footer-instagram');
+  if (insta && info.instagram) {
+    insta.href = info.instagram;
+    insta.style.display = 'inline-block';
+  } else if (insta) {
+    insta.style.display = 'none';
+  }
+
+  // Facebook
+  const face = document.getElementById('footer-facebook');
+  if (face && info.facebook) {
+    face.href = info.facebook;
+    face.style.display = 'inline-block';
+  } else if (face) {
+    face.style.display = 'none';
+  }
+
+  // WhatsApp
+  const whats = document.getElementById('footer-whatsapp');
+  if (whats && info.whatsappNumber) {
+    whats.href = `https://wa.me/${info.whatsappNumber}`;
+    whats.style.display = 'inline-block';
+  } else if (whats) {
+    whats.style.display = 'none';
+  }
+
+  // Linha com cor do tema
+  const line = document.querySelector('.footer-line');
+  if (line) {
+    line.style.background = info.siteColor || '#388e3c';
+  }
+}
 document.addEventListener('DOMContentLoaded', async () => {
   const progressBar = document.getElementById('main-progress-bar');
   if (progressBar) progressBar.style.width = '15%';
@@ -62,6 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
      aplicarStatus(info);
      iniciarSistemaHorarios(res.horarios); // 👈 ADICIONE APENAS ISSO
      carregarBairros(fretes);
+     aplicarFooter(info);
       document.getElementById('company-name').textContent = info.companyName;
       if (info.logoUrl) {
         document.getElementById('company-logo').src = info.logoUrl;
