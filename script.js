@@ -99,7 +99,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const info = res.info;
       const data = res.menu;
       const fretes = res.fretes || [];
-      const fretes = res.fretes || [];
      
      optionNames = (info && info.optionNames) ? info.optionNames : {};
      
