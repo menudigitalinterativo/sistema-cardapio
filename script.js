@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const info = res.info;
       const data = res.menu;
       const fretes = res.fretes || [];
+      const fretes = res.fretes || [];
      
      optionNames = (info && info.optionNames) ? info.optionNames : {};
      
@@ -111,6 +112,7 @@ document.addEventListener('DOMContentLoaded', async () => {
      iniciarSistemaHorarios(res.horarios); // 👈 ADICIONE APENAS ISSO
      carregarBairros(fretes);
      aplicarFooter(info);
+     
       document.getElementById('company-name').textContent = info.companyName;
       if (info.logoUrl) {
         document.getElementById('company-logo').src = info.logoUrl;
