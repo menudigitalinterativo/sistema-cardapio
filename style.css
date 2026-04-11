@@ -624,3 +624,43 @@
   max-height: 90vh;
   overflow-y: auto;
 }
+#site-footer {
+  margin-top: 40px;
+  background: #f9f9f9;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+}
+
+.footer-line {
+  height: 5px;
+  width: 100%;
+  background: var(--theme-color);
+}
+
+.footer-content {
+  padding: 20px;
+}
+
+.footer-content h3 {
+  margin: 10px 0 5px;
+}
+
+.footer-content p {
+  margin: 3px 0;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.footer-social {
+  margin-top: 15px;
+}
+
+.footer-social a {
+  margin: 0 8px;
+  font-size: 20px;
+  color: white;
+  background: var(--theme-color);
+  padding: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
