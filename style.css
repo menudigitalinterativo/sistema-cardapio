@@ -658,9 +658,12 @@
 .footer-social a {
   margin: 0 8px;
   font-size: 20px;
-  color: white;
-  background: var(--theme-color);
+  color: #fff;
+  background: var(--theme-color, #8e0606);
   padding: 10px;
   border-radius: 50%;
   display: inline-block;
+}
+.footer-social a i {
+  color: inherit;
 }
