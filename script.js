@@ -391,14 +391,7 @@ function updateUI() {
               : '';
             return `${o.qty}x ${o.name}${extraTxt}`;
           }).join(', ')}
-        </div>
-
-        <button onclick="removeItem(${idx})"
-          style="color:red; border:none; background:none; cursor:pointer; padding:0; font-size:0.85em">
-          Remover
-        </button>
-      </div>
-    `;
+       
   });
 
   document.getElementById('cart-count').textContent = c;
