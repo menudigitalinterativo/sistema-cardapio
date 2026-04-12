@@ -392,6 +392,7 @@ function updateUI() {
             return `${o.qty}x ${o.name}${extraTxt}`;
           }).join(', ')}
        
+    `;
   });
 
   document.getElementById('cart-count').textContent = c;
