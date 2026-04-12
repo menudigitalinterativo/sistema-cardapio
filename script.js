@@ -356,7 +356,10 @@ function updateUI() {
         adicionais += extra * o.qty * item.qty;
       });
     }
-
+  function remove(index) {
+  cart.splice(index, 1);
+  updateUI();
+}
     const totalItem = itemBase + adicionais;
     t += totalItem;
     c += item.qty;
