@@ -356,10 +356,6 @@ function updateUI() {
         adicionais += extra * o.qty * item.qty;
       });
     }
-  function remove(index) {
-  cart.splice(index, 1);
-  updateUI();
-}
     const totalItem = itemBase + adicionais;
     t += totalItem;
     c += item.qty;
@@ -387,7 +383,10 @@ function updateUI() {
   window.totalCarrinho = t;
   atualizarTotalComFrete();
 }
-
+function removeItem(index) {
+  cart.splice(index, 1);
+  updateUI();
+}
 function finalizarPedido() {
   const nomeCliente = document.getElementById('client-name').value.trim();
   const tipoEntrega = document.getElementById('tipo-entrega').value;
