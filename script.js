@@ -212,8 +212,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 function renderOptions(item) {
   let h = '';
 
-  for (let k in item) {
-    if (!item[k] || !item[k].items) continue;
+ for (let k in item) {
+  if (!item[k] || typeof item[k] !== 'object' || !item[k].items) continue;
 
     const grupo = item[k];
 
@@ -333,7 +333,7 @@ if (isComplex) {
         btn.closest('.options-and-footer-container').querySelectorAll('input').forEach(i => i.value = 0);
         toggle(btn.closest('.item-details').querySelector('.item-header-clickable'), true);
       }
-      const key = name + JSON.stringify(opts);
+      const key = name + JSON.stringify(opts.sort((a,b)=>a.name.localeCompare(b.name)));
       const ex = cart.find(c => c.key === key);
       if(ex) ex.qty++; else cart.push({key, name, price, opts, qty: 1});
       updateUI();
@@ -453,8 +453,16 @@ function finalizarPedido() {
   let totalGeral = 0;
 
   cart.forEach(item => {
-    const subTotal = item.price * item.qty;
-    totalGeral += subTotal;
+  let subTotal = item.price * item.qty;
+
+if (item.opts && item.opts.length) {
+  item.opts.forEach(o => {
+    const extra = parseFloat(o.extra) || 0;
+    subTotal += extra * o.qty * item.qty;
+  });
+}
+
+totalGeral += subTotal;
 
     // Item principal
     mensagem += `%0A${item.qty}x ${item.name} - R$ ${subTotal.toFixed(2).replace('.', ',')}%0A`;
