@@ -436,7 +436,6 @@ function updateUI() {
         adicionais += extra * o.qty * item.qty;
       });
     }
-
     const totalItem = itemBase + adicionais;
     t += totalItem;
     c += item.qty;
