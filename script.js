@@ -442,7 +442,28 @@ function updateUI() {
 
     list.innerHTML += `
       <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
-        <b>${item.qty}x ${item.name}</b> 
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+  
+  <div>
+    <b>${item.name}</b>
+
+    <div style="display:flex; align-items:center; gap:8px; margin-top:5px;">
+      <button onclick="alterarQtd(${idx}, -1)"
+        style="width:25px; height:25px; border:none; border-radius:50%; cursor:pointer;">
+        -
+      </button>
+
+      <span>${item.qty}</span>
+
+      <button onclick="alterarQtd(${idx}, 1)"
+        style="width:25px; height:25px; border:none; border-radius:50%; cursor:pointer;">
+        +
+      </button>
+    </div>
+  </div>
+
+  <span>${formatarPreco(totalItem)}</span>
+</div>
         <span style="float:right">${formatarPreco(totalItem)}</span>
 
         <div style="font-size:0.85em; color:#888">
@@ -471,7 +492,20 @@ function updateUI() {
 function removeItem(index) {
   cart.splice(index, 1);
   updateUI();
-}function finalizarPedido() {
+}
+function alterarQtd(index, delta) {
+  if (!cart[index]) return;
+
+  cart[index].qty += delta;
+
+  // Se zerar, remove o item
+  if (cart[index].qty <= 0) {
+    cart.splice(index, 1);
+  }
+
+  updateUI();
+}
+function finalizarPedido() {
   const nomeCliente = document.getElementById('client-name').value.trim();
   const tipoEntrega = document.getElementById('tipo-entrega').value;
   const selectBairro = document.getElementById('select-bairro');
