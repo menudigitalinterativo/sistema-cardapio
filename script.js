@@ -339,60 +339,6 @@ if (isComplex) {
       updateUI();
       notify("Adicionado!");
     }
-
-function updateUI() {
-  const list = document.getElementById('cart-items');
-  let t = 0, c = 0;
-  list.innerHTML = '';
-
-  cart.forEach((item, idx) => {
-    const price = parseFloat(item.price) || 0;
-    let itemBase = price * item.qty;
-    let adicionais = 0;
-
-    if (item.opts && item.opts.length) {
-      item.opts.forEach(o => {
-        const extra = parseFloat(o.extra) || 0;
-        adicionais += extra * o.qty * item.qty;
-      });
-    }
-
-    const totalItem = itemBase + adicionais;
-    t += totalItem;
-    c += item.qty;
-
-    list.innerHTML += `
-      <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
-        <b>${item.qty}x ${item.name}</b> 
-        <span style="float:right">${formatarPreco(totalItem)}</span>
-
-        <div style="font-size:0.85em; color:#888">
-          ${(item.opts || []).map(o => {
-            const extraTxt = o.extra && o.extra > 0
-              ? ` (+R$ ${o.extra.toFixed(2).replace('.', ',')})`
-              : '';
-            return `${o.qty}x ${o.name}${extraTxt}`;
-          }).join(', ')}
-        </div>
-
-        <button onclick="removeItem(${idx})"
-          style="color:red; border:none; background:none; cursor:pointer; padding:0; font-size:0.85em">
-          Remover
-        </button>
-      </div>
-    `;
-  });
-
-  document.getElementById('cart-count').textContent = c;
-  window.totalCarrinho = t;
-
-  atualizarTotalComFrete();
-}
-
-function removeItem(index) {
-  cart.splice(index, 1);
-  updateUI();
-}
 function finalizarPedido() {
   const nomeCliente = document.getElementById('client-name').value.trim();
   const tipoEntrega = document.getElementById('tipo-entrega').value;
