@@ -468,6 +468,106 @@ cart.forEach(item => {
   document.getElementById('cart-modal').style.display = 'none';
   notify("Pedido enviado!");
 }
+function updateUI() {
+  const list = document.getElementById('cart-items');
+  let t = 0, c = 0; 
+  list.innerHTML = '';
+
+  cart.forEach((item, idx) => {
+    t += item.price * item.qty; 
+    c += item.qty;
+
+    list.innerHTML += `
+      <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
+        <b>${item.qty}x ${item.name}</b> 
+        <span style="float:right">R$ ${(item.price*item.qty).toFixed(2)}</span>
+        <div style="font-size:0.85em; color:#888">
+          ${item.opts.map(o => o.qty+'x '+o.name).join(', ')}
+        </div>
+        <button onclick="remove(${idx})" style="color:red; border:none; background:none; cursor:pointer; padding:0; font-size:0.85em">
+          Remover
+        </button>
+      </div>
+    `;
+  });
+
+  document.getElementById('cart-count').textContent = c;
+  // 🔥 ESSENCIAL
+  window.totalCarrinho = t;
+
+  // 🔥 ATUALIZA TUDO
+  atualizarTotalComFrete();
+}
+
+function finalizarPedido() {
+  const nomeCliente = document.getElementById('client-name').value.trim();
+  const tipoEntrega = document.getElementById('tipo-entrega').value;
+  const selectBairro = document.getElementById('select-bairro');
+  const taxaEntrega = parseFloat(selectBairro.value) || 0;
+  
+  // Validações
+  if (companyStatus !== 'Aberto') return notify("Loja Fechada!");
+  if (!cart.length) return notify("Sacola vazia!");
+  if (!nomeCliente) return notify("Por favor, informe seu nome."); 
+  if (!tipoEntrega) return notify("Selecione o tipo de entrega.");
+ 
+  if (tipoEntrega === 'delivery' && !selectBairro.value) {
+    return notify("Selecione o bairro para entrega.");
+  }
+
+  let mensagem = 'Olá, gostaria de fazer o pedido:%0A';
+  mensagem += `*Cliente:* ${nomeCliente}%0A`;
+ 
+ // 🔥 Tipo de entrega
+  mensagem += `*Entrega:* ${tipoEntrega === 'delivery' ? 'Delivery' : 'Retirada no local'}%0A`;
+
+  // 🔥 Bairro se for delivery
+  if (tipoEntrega === 'delivery') {
+    const nomeBairro = selectBairro.options[selectBairro.selectedIndex].text;
+    mensagem += `*Bairro:* ${nomeBairro}%0A`;
+  }
+  let totalGeral = 0;
+
+  cart.forEach(item => {
+    const subTotal = item.price * item.qty;
+    totalGeral += subTotal;
+
+    // Item principal
+    mensagem += `%0A${item.qty}x ${item.name} - R$ ${subTotal.toFixed(2).replace('.', ',')}%0A`;
+
+    // Opcionais (um embaixo do outro)
+    if (item.opts && item.opts.length > 0) {
+      mensagem += item.opts.map(o => `• ${o.qty}x ${o.name}`).join('%0A') + '%0A';
+    }
+  });
+
+ // 🔥 Soma frete se for delivery
+  if (tipoEntrega === 'delivery') {
+    mensagem += `%0A*Taxa de entrega:* R$ ${taxaEntrega.toFixed(2).replace('.', ',')}%0A`;
+    totalGeral += taxaEntrega;
+  }
+
+  // 🔥 Total final
+  mensagem += `%0A*Total do Pedido: R$ ${totalGeral.toFixed(2).replace('.', ',')}*`;
+
+  // 🔥 Observação pagamento
+  mensagem += `%0A%0AForma de pagamento será combinada na confirmação.`;
+
+  if (!companyWhatsApp) return notify("WhatsApp não configurado!");
+
+  window.open(`https://wa.me/${companyWhatsApp}?text=${mensagem}`, '_blank');
+
+  // Limpa o carrinho e fecha o modal
+  cart = [];
+  document.getElementById('client-name').value = '';
+  document.getElementById('tipo-entrega').value = '';
+  document.getElementById('select-bairro').value = '';
+  document.getElementById('box-bairro').style.display = 'none';
+
+  updateUI();
+  document.getElementById('cart-modal').style.display = 'none';
+  notify("Pedido enviado!");
+}
 function setupUI() {
   const modal = document.getElementById('cart-modal');
 
@@ -565,8 +665,6 @@ function atualizarTotalComFrete() {
   document.getElementById('total-geral').innerText =
     `R$ ${total.toFixed(2).replace('.', ',')}`;
 }
-
-
 // =========================
 // 🔥 CARREGAR BAIRROS
 // =========================
