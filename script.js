@@ -84,6 +84,8 @@ function aplicarFooter(info) {
   }
 }
 document.addEventListener('DOMContentLoaded', async () => {
+ carregarCarrinho(); 
+ updateUI();
   const progressBar = document.getElementById('main-progress-bar');
   if (progressBar) progressBar.style.width = '15%';
 
@@ -399,6 +401,7 @@ function updateUI() {
   window.totalCarrinho = t;
 
   atualizarTotalComFrete();
+  salvarCarrinho();
 }
 
 function removeItem(index) {
@@ -485,6 +488,7 @@ totalGeral += subTotal;
 
   // Limpa o carrinho e fecha o modal
   cart = [];
+ localStorage.removeItem('carrinho');
   document.getElementById('client-name').value = '';
   document.getElementById('tipo-entrega').value = '';
   document.getElementById('select-bairro').value = '';
@@ -571,6 +575,17 @@ function setupUI() {
   // 🔥 Atualiza quando muda o bairro
   document.getElementById('select-bairro').onchange = atualizarTotalComFrete;
 }
+function carregarCarrinho() {
+  const dados = localStorage.getItem('carrinho');
+
+  if (dados) {
+    try {
+      cart = JSON.parse(dados);
+    } catch (e) {
+      cart = [];
+    }
+  }
+}
 // =========================
 // 🔥 FORA DA FUNÇÃO (GLOBAL)
 // =========================
@@ -590,6 +605,9 @@ function atualizarTotalComFrete() {
 
   document.getElementById('total-geral').innerText =
     `R$ ${total.toFixed(2).replace('.', ',')}`;
+}
+function salvarCarrinho() {
+  localStorage.setItem('carrinho', JSON.stringify(cart));
 }
 // =========================
 // 🔥 CARREGAR BAIRROS
