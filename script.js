@@ -384,8 +384,6 @@ function updateUI() {
 
   <span>${formatarPreco(totalItem)}</span>
 </div>
-        <span style="float:right">${formatarPreco(totalItem)}</span>
-
         <div style="font-size:0.85em; color:#888">
           ${(item.opts || []).map(o => {
             const extraTxt = o.extra && o.extra > 0
