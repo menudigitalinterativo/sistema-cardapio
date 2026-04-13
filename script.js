@@ -362,43 +362,47 @@ function updateUI() {
     t += totalItem;
     c += item.qty;
 
-    list.innerHTML += `
-      <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-  
-  <div>
-    <b>${item.name}</b>
+   list.innerHTML += `
+  <div style="padding:10px 0; border-bottom:1px solid #eee; font-size: 0.9em;">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
 
-    <div style="display:flex; align-items:center; gap:8px; margin-top:5px;">
-      <button onclick="alterarQtd(${idx}, -1)"
-        style="width:25px; height:25px; border:none; border-radius:50%; cursor:pointer;">
-        -
-      </button>
+      <!-- Esquerda: nome + controles de quantidade -->
+      <div style="display:flex; flex-direction:column; gap:5px; flex:1;">
+        <b>${item.name}</b>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button onclick="alterarQtd(${idx}, -1)"
+            style="width:25px; height:25px; border:none; border-radius:50%; cursor:pointer;">
+            -
+          </button>
+          <span>${item.qty}</span>
+          <button onclick="alterarQtd(${idx}, 1)"
+            style="width:25px; height:25px; border:none; border-radius:50%; cursor:pointer;">
+            +
+          </button>
+        </div>
+      </div>
 
-      <span>${item.qty}</span>
-
-      <button onclick="alterarQtd(${idx}, 1)"
-        style="width:25px; height:25px; border:none; border-radius:50%; cursor:pointer;">
-        +
-      </button>
-    </div>
-  </div>
-
-  <span>${formatarPreco(totalItem)}</span>
-</div>
-        <div style="font-size:0.85em; color:#888">
-          ${(item.opts || []).map(o => {
-            const extraTxt = o.extra && o.extra > 0
-              ? ` (+R$ ${o.extra.toFixed(2).replace('.', ',')})`
-              : '';
-            return `${o.qty}x ${o.name}${extraTxt}`;
-          }).join(', ')}
-      <button onclick="removeItem(${idx})"
-        style="color:red; border:none; background:none; cursor:pointer; padding:0; font-size:0.9em">
-        <i class="fas fa-trash"></i>
+      <!-- Direita: preço + lixeira -->
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+        <span>${formatarPreco(totalItem)}</span>
+        <button onclick="removeItem(${idx})"
+          style="color:red; border:none; background:none; cursor:pointer; padding:0; font-size:1rem;">
+          <i class="fas fa-trash"></i>
         </button>
       </div>
-    `;
+    </div>
+
+    <!-- Linha de baixo: adicionais -->
+    <div style="font-size:0.85em; color:#888; margin-top:5px;">
+      ${(item.opts || []).map(o => {
+        const extraTxt = o.extra && o.extra > 0
+          ? ` (+R$ ${o.extra.toFixed(2).replace('.', ',')})`
+          : '';
+        return `${o.qty}x ${o.name}${extraTxt}`;
+      }).join(', ')}
+    </div>
+  </div>
+`;
   });
 
   document.getElementById('cart-count').textContent = c;
