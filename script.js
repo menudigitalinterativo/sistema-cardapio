@@ -125,12 +125,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       // Aplica o tema dinâmico
-      const style = document.createElement('style');
-      style.textContent = `
-        .section-title { border-color: ${themeColor}; color: ${themeColor}; }
-        .add-to-cart-btn, #cart-float, .quantity-controls button { background-color: ${themeColor} !important; }
-        .item-name { color: ${themeColor}; }
-      `;
+const style = document.createElement('style');
+style.textContent = `
+  :root {
+    --cor-site: ${themeColor};
+  }
+
+  .section-title { border-color: var(--cor-site); color: var(--cor-site); }
+
+  .add-to-cart-btn,
+  #cart-float,
+  .quantity-controls button,
+  .btn-social {
+    background-color: var(--cor-site) !important;
+    color: #fff !important;
+  }
+
+  .item-name {
+    color: var(--cor-site);
+  }
+`;
       document.head.appendChild(style);
       
       if (progressBar) {
