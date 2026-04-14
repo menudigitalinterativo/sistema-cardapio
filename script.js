@@ -106,11 +106,12 @@ document.addEventListener('DOMContentLoaded', async () => {
      
       // Configurações visuais (Cores e WhatsApp)
       themeColor = info.siteColor || "#388e3c";
+      document.documentElement.style.setProperty('--cor-site', themeColor);
       companyWhatsApp = info.whatsappNumber || '';
       companyStatus = info.status || 'Aberto';
 
      aplicarStatus(info);
-     iniciarSistemaHorarios(res.horarios); // 👈 ADICIONE APENAS ISSO
+     iniciarSistemaHorarios(res.horarios); 
      carregarBairros(fretes);
      aplicarFooter(info);
      
