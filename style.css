@@ -667,3 +667,12 @@
 .footer-social a i {
   color: inherit;
 }
+:root {
+  --cor-site: #28a745;
+}
+
+.btn-social {
+  background-color: var(--cor-site);
+  color: #fff;
+  border: none;
+}
