@@ -1,4 +1,4 @@
- let cart = [];
+let cart = [];
 let companyWhatsApp = '';
 let themeColor = "#388e3c";
 let companyStatus = "Aberto";
